@@ -2,12 +2,12 @@ package com.example.crypto;
 
 import com.example.crypto.constant.Constants;
 
-import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * @author Chris
@@ -36,6 +36,23 @@ public class AES {
         }
     }
 
+    public AES(byte[] key) {
+        mKey = new SecretKeySpec(key, Constants._AES);
+    }
+
+    public byte[] getKey() {
+        return mKey.getEncoded();
+    }
+
+    /**
+     * 动态设置 aes key
+     *
+     * @param key key
+     */
+    public void setKey(byte[] key) {
+        this.mKey = new SecretKeySpec(key, Constants._AES);
+    }
+
     public byte[] encrypt(String content) {
         if (mKey == null) {
             return new byte[]{-1};
@@ -43,7 +60,7 @@ public class AES {
         try {
             Cipher cipher = Cipher.getInstance(Constants.AES_ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, mKey);
-            return cipher.doFinal(content.getBytes(StandardCharsets.UTF_8));
+            return cipher.doFinal(content.getBytes(Constants.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
         }

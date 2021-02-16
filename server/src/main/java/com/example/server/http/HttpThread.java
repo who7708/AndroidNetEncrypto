@@ -48,7 +48,7 @@ public class HttpThread implements Runnable {
                     && !content.trim().isEmpty()) {
                 request.append(content).append(Constants.LINE);
             }
-            System.out.println("request:" + Constants.LINE + request);
+            System.out.println("客户端请求内容:" + Constants.LINE + request);
 
             // 返回数据
             byte[] response = new byte[0];

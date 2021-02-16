@@ -1,7 +1,8 @@
 package com.example.crypto.utils;
 
+import com.example.crypto.Base64;
+
 import java.nio.ByteBuffer;
-import java.util.Base64;
 
 /**
  * @author Chris
@@ -16,11 +17,11 @@ public class DataUtils {
      * @return byte[]
      */
     public static byte[] base64Decode(String data) {
-        return Base64.getMimeDecoder().decode(data);
+        return Base64.decode(data, Base64.NO_WRAP);
     }
 
     public static String base64Encode(byte[] data) {
-        return Base64.getEncoder().encodeToString(data);
+        return Base64.encodeToString(data, Base64.NO_WRAP);
     }
 
     /**
@@ -34,5 +35,10 @@ public class DataUtils {
         ByteBuffer buffer = ByteBuffer.allocate(4);
         buffer.putInt(data);
         return buffer.array();
+    }
+
+    public static int byte2Int(byte[] data) {
+        ByteBuffer buffer = ByteBuffer.wrap(data);
+        return buffer.getInt();
     }
 }

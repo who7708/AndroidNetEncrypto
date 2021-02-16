@@ -3,7 +3,6 @@ package com.example.crypto;
 import com.example.crypto.constant.Constants;
 import com.example.crypto.utils.DataUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -33,7 +32,7 @@ public class RSA {
             Cipher cipher = Cipher.getInstance(Constants.RSA_ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, rsaPublicKey);
 
-            result = cipher.doFinal(message.getBytes(StandardCharsets.UTF_8));
+            result = cipher.doFinal(message.getBytes());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -64,6 +63,6 @@ public class RSA {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new String(result, StandardCharsets.UTF_8);
+        return new String(result);
     }
 }

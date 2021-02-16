@@ -19,7 +19,7 @@ public class DH {
     public DH() {
         Random random = new Random();
         mPrivateKey = random.nextInt(10);
-        System.out.println("dh private key is " + mPrivateKey);
+        System.out.println("DH PRIVATE KEY IS " + mPrivateKey);
     }
 
     public int getPublicKey() {
@@ -36,7 +36,14 @@ public class DH {
      */
     public byte[] getSecretKey(int publicKey) {
         int buf = (int) (Math.pow(publicKey, mPrivateKey) % dhP);
-        System.out.println("secrete is " + buf);
+        System.out.println("根据 DH 公钥生成的密钥为 " + buf);
+        return sha256(buf);
+    }
+
+    public byte[] getSecretKey(byte[] publicKey) {
+        int key = DataUtils.byte2Int(publicKey);
+        int buf = (int) (Math.pow(key, mPrivateKey) % dhP);
+        System.out.println("根据 DH 公钥生成的密钥为 " + buf);
         return sha256(buf);
     }
 

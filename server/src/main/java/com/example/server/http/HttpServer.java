@@ -1,8 +1,12 @@
 package com.example.server.http;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -45,5 +49,31 @@ public class HttpServer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 获取当前请求的header对象，header为map
+     *
+     * @param request 请求数据
+     * @return header 对象的map形式
+     */
+    public static Map<String, String> getHeader(String request) {
+        Map<String, String> header = new HashMap<>();
+
+        try {
+            // 逐行解析 request 内容，读取到 map中
+            BufferedReader reader = new BufferedReader(new StringReader(request));
+            String line = reader.readLine();
+            while (line != null && !line.trim().isEmpty()) {
+                int p = line.indexOf(":");
+                if (p >= 0) {
+                    header.put(line.substring(0, p).trim().toLowerCase(), line.substring(p + 1).trim());
+                }
+                line = reader.readLine();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return header;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.server;
 
 import com.example.crypto.AES;
+import com.example.crypto.Base64;
 import com.example.crypto.DH;
 import com.example.crypto.RSA;
 import com.example.crypto.constant.Constants;
@@ -9,13 +10,57 @@ import com.example.server.http.HttpCallback;
 import com.example.server.http.HttpServer;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 public class MyServer {
     public static void main(String[] args) {
-        // startServer();
+        startServer();
+        // testDh();
         // testRsa();
         // testAes();
-        testDh();
+    }
+
+    private static void startServer() {
+        System.out.println("start http server ...");
+        HttpServer server = new HttpServer(new HttpCallback() {
+            private final DH mDh = new DH();
+
+            private final AES mAes = new AES();
+
+            @Override
+            public byte[] onResponse(String request) {
+                // 客户端的request，经过相应处理，返回客户端
+                // 拿到 request 数据后，首先判断是不是握手请求
+                if (isHandshake(request)) {
+                    // 握手的相应操作
+                    Map<String, String> header = HttpServer.getHeader(request);
+                    String handshake = header.get(Constants.HANDSHAKE);
+                    System.out.println("客户端请求的 handshake 内容：" + handshake);
+                    int dhPublicKey = Integer.parseInt(RSA.decrypt(handshake, Constants.RSA_PRIVATE_KEY));
+                    // 拿到客户端的 dh public key, 生成服务端 dh 的 secret
+                    // 设置给 aes 作为密钥
+                    mAes.setKey(mDh.getSecretKey(dhPublicKey));
+
+                    // 生成服务端的 dh public key 给客户端，并在客户端生成 dh 的 secret
+                    int publicKey = mDh.getPublicKey();
+                    System.out.println("服务端生成的 DH 公钥为：" + publicKey);
+                    return DataUtils.int2Byte(publicKey);
+                }
+                // 普通请求操作
+                return mAes.encrypt("Hello World");
+            }
+        });
+        server.startHttpServer();
+    }
+
+    /**
+     * 通过 Header 当中的 handshake 字段判断是不为握手请求
+     *
+     * @param request 客户端请求
+     * @return 是不为握手请求
+     */
+    private static boolean isHandshake(String request) {
+        return request != null && request.trim().contains(Constants.HANDSHAKE);
     }
 
     private static void testDh() {
@@ -24,16 +69,17 @@ public class MyServer {
 
         // 客户端创建公钥
         int publicKeyC = dhC.getPublicKey();
+        System.out.println("客户端创建公钥：" + publicKeyC);
         // 服务端创建公钥
         int publicKeyS = dhS.getPublicKey();
+        System.out.println("服务端创建公钥：" + publicKeyS);
 
         byte[] secretC = dhC.getSecretKey(publicKeyS);
 
         byte[] secretS = dhS.getSecretKey(publicKeyC);
 
-        System.out.println("client's secrete is " + new String(secretC, StandardCharsets.UTF_8));
-        System.out.println("server's secrete is " + new String(secretS, StandardCharsets.UTF_8));
-
+        System.out.println("client's secret is " + Base64.encodeToString(secretC, Base64.NO_WRAP));
+        System.out.println("server's secret is " + Base64.encodeToString(secretS, Base64.NO_WRAP));
     }
 
     private static void testAes() {
@@ -54,16 +100,5 @@ public class MyServer {
         System.out.println(encrypted);
         String decrypt = RSA.decrypt(encrypted, Constants.RSA_PRIVATE_KEY);
         System.out.println(decrypt);
-    }
-
-    private static void startServer() {
-        System.out.println("start http server ...");
-        HttpServer server = new HttpServer(new HttpCallback() {
-            @Override
-            public byte[] onResponse(String request) {
-                return "Hello World".getBytes(StandardCharsets.UTF_8);
-            }
-        });
-        server.startHttpServer();
     }
 }

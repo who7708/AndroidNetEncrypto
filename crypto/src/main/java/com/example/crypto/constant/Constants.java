@@ -6,6 +6,9 @@ package com.example.crypto.constant;
  * @date 2/17/21
  */
 public class Constants {
+    public static final String HANDSHAKE = "handshake";
+    public static final String DEFAULT_CHARSET = "UTF-8";
+    public static final String UTF_8 = "UTF-8";
     public static final String _RSA = "RSA";
     public static final String RSA_ALGORITHM = "RSA/ECB/PKCS1Padding";
     public static final String _AES = "AES";
