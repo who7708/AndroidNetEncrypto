@@ -35,10 +35,10 @@ public class HttpServer {
             // 1. 启动 socket
             ServerSocket serverSocket = new ServerSocket(7001);
 
-            // 2. 等待连接
             while (mRunning) {
-                //
+                // 2. 等待连接
                 Socket socket = serverSocket.accept();
+                System.out.println("accept");
                 ExecutorService threadPool = Executors.newCachedThreadPool();
                 threadPool.execute(new HttpThread(socket, mCallback));
             }
