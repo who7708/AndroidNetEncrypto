@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Android NetEncrypto</string>
+    <string name="show_result_tv">显示结果</string>
+    <string name="send_request_btn">发送一次网络请求</string>
 </resources>
