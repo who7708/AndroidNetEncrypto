@@ -1,6 +1,7 @@
 package com.example.server;
 
 import com.example.crypto.AES;
+import com.example.crypto.DH;
 import com.example.crypto.RSA;
 import com.example.crypto.constant.Constants;
 import com.example.crypto.utils.DataUtils;
@@ -13,7 +14,26 @@ public class MyServer {
     public static void main(String[] args) {
         // startServer();
         // testRsa();
-        testAes();
+        // testAes();
+        testDh();
+    }
+
+    private static void testDh() {
+        DH dhC = new DH();
+        DH dhS = new DH();
+
+        // 客户端创建公钥
+        int publicKeyC = dhC.getPublicKey();
+        // 服务端创建公钥
+        int publicKeyS = dhS.getPublicKey();
+
+        byte[] secretC = dhC.getSecretKey(publicKeyS);
+
+        byte[] secretS = dhS.getSecretKey(publicKeyC);
+
+        System.out.println("client's secrete is " + new String(secretC, StandardCharsets.UTF_8));
+        System.out.println("server's secrete is " + new String(secretS, StandardCharsets.UTF_8));
+
     }
 
     private static void testAes() {

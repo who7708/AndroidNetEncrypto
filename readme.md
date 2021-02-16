@@ -66,7 +66,17 @@ openssl rsa -in rsa_private_key.pem -pubout -out rsa_public_key.pem
 
 * 执行加密，然后 Base64 编码
 
+## DH 密钥交换
 
+### DH 密钥交换主要是两个公式编写
+
+* 公钥计算公式
+
+* 私钥计算公式
+
+* 生成随机数作为私钥
+
+* 预置质数原根对
 
 
 
